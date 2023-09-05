@@ -1,5 +1,8 @@
-﻿using LauraModasAPI.Data;
+﻿using AutoMapper;
+using LauraModasAPI.Data;
+using LauraModasAPI.Dtos.CustomerDtos;
 using LauraModasAPI.Models;
+using LauraModasAPI.Profiles;
 using LauraModasAPI.Services.Iservices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -9,20 +12,24 @@ namespace LauraModasAPI.Services
     public class CustomerServices : ICustomerServices
     {
         readonly DataContext _context;
-        public CustomerServices(DataContext context)
+        readonly IMapper _mapper;
+        public CustomerServices(DataContext context, IMapper mapper)
         {
             this._context = context;
+            this._mapper = mapper;
         }
 
-        public async Task<CustomerModel> GetCustomer(int id)
+        public async Task<ReadCustomerDto> GetCustomer(int id)
         {
             try
             {
                 CustomerModel customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id.Equals(id));
 
+                ReadCustomerDto customerView = _mapper.Map<ReadCustomerDto>(customer);
+
                 if (customer != null)
                 {
-                    return customer;
+                    return customerView;
                 } else
                 {
                     throw new Exception("Cliente não encontrado.");
@@ -36,15 +43,35 @@ namespace LauraModasAPI.Services
             
         }
 
-        public async Task<List<CustomerModel>> GetCustomers()
+        public async Task<CustomerModel> GetCustomerModelForId(int id)
+        {
+            try
+            {
+                CustomerModel customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id.Equals(id));
+
+                if (customer == null)
+                {
+                    throw new Exception("Não encontrado");
+                }
+
+                return customer;
+            } catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+        }
+
+        public async Task<List<ReadCustomerDto>> GetCustomers()
         {
             try
             {
                 List<CustomerModel> customers = await _context.Customers.ToListAsync();
 
+                List<ReadCustomerDto> customersView = _mapper.Map<List<ReadCustomerDto>>(customers);
+
                 if (customers.Count != 0)
                 {
-                    return customers;
+                    return customersView;
                 } else
                 {
                     throw new Exception("Sua lista de clientes está vazia.");
@@ -55,40 +82,66 @@ namespace LauraModasAPI.Services
             }
         }
 
-        public async Task<CustomerModel> PostCustomer(CustomerModel customer)
+        public async Task<List<ReadCustomerDto>> GetCustomerByName(string name)
         {
             try
             {
-                await _context.Customers.AddAsync(customer);
+                List<CustomerModel> customers = _context.Customers.Where(c => c.Name.ToUpper().Contains(name.ToUpper())).ToList();
 
-                await _context.SaveChangesAsync();
+                if(customers.Count == 0)
+                {
+                    throw new Exception("Houve um erro");
+                }
 
-                return customer;
+                List<ReadCustomerDto> customersView = _mapper.Map<List<ReadCustomerDto>>(customers);
+
+                return customersView;
+
+
             } catch (Exception ex)
             {
                 throw new Exception($"{ex.Message}");
             }
         }
 
-        public async Task<CustomerModel> AlterCustomer(int id, CustomerModel customer)
+        public async Task<ReadCustomerDto> PostCustomer(CreateCustomerDto request)
         {
             try
             {
-                CustomerModel customerDB = await GetCustomer(id);
+                CustomerModel customer = _mapper.Map<CustomerModel>(request);
 
-                if (customerDB != null)
-                {
-                    customerDB.Name = customer.Name;
-                    customerDB.Phone = customer.Phone;
+                await _context.Customers.AddAsync(customer);
+                await _context.SaveChangesAsync();
 
-                    await _context.SaveChangesAsync();
+                ReadCustomerDto customerView = _mapper.Map<ReadCustomerDto>(customer);
 
-                    return customerDB;
-                }
-                else
+                return customerView;
+
+            } catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+        }
+
+        public async Task<ReadCustomerDto> AlterCustomer(int id, CreateCustomerDto request)
+        {
+            try
+            {
+                CustomerModel customerDb = await GetCustomerModelForId(id);
+
+                if (customerDb == null)
                 {
                     throw new Exception("Cliente não encontrado.");
                 }
+
+                customerDb.Name = request.Name;
+                customerDb.Phone = request.Phone;
+
+                await _context.SaveChangesAsync();
+
+                ReadCustomerDto customerView = _mapper.Map<ReadCustomerDto>(customerDb);
+
+                return customerView;
             } catch(Exception ex)
             {
                 throw new Exception($"{ex.Message}");
@@ -99,7 +152,7 @@ namespace LauraModasAPI.Services
         {
             try
             {
-                CustomerModel customerDB = await GetCustomer(id);
+                CustomerModel customerDB = await GetCustomerModelForId(id);
 
                 if (customerDB != null)
                 {

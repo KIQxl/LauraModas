@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -43,14 +44,15 @@ namespace LauraModasAPI.Migrations
                     Description = table.Column<string>(type: "varchar(350)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
+                    Date = table.Column<DateTime>(type: "Date", nullable: false),
+                    CustomerModelId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Buys", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Buys_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        name: "FK_Buys_Customers_CustomerModelId",
+                        column: x => x.CustomerModelId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -58,9 +60,9 @@ namespace LauraModasAPI.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Buys_CustomerId",
+                name: "IX_Buys_CustomerModelId",
                 table: "Buys",
-                column: "CustomerId");
+                column: "CustomerModelId");
         }
 
         /// <inheritdoc />

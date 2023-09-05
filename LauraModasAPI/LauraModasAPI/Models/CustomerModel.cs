@@ -5,6 +5,6 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Phone { get; set; }
-        public virtual List<BuyModel>? Buys { get; set; }
+        public virtual ICollection<BuyModel>? BuysModel { get; set; }
     }
 }

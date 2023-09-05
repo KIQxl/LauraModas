@@ -10,6 +10,8 @@ namespace LauraModasAPI.Data.Configurations
         {
             builder.HasKey(p => p.Id);
 
+            builder.HasOne(p => p.CustomerModel).WithMany(p => p.BuysModel);
+
             builder.Property(p => p.Name)
                 .HasColumnType("varchar(200)")
                 .IsRequired();
@@ -25,9 +27,12 @@ namespace LauraModasAPI.Data.Configurations
                 .HasColumnType("int")
                 .IsRequired();
 
-            builder.Property(p => p.CustomerId)
+            builder.Property(p => p.CustomerModelId)
                 .HasColumnType("int")
                 .IsRequired();
+
+            builder.Property(p => p.Date)
+                .HasColumnType("Date");
 
         }
     }

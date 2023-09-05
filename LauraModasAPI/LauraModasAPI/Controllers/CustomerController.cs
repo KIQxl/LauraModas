@@ -1,15 +1,19 @@
-﻿using LauraModasAPI.Models;
+﻿using AutoMapper;
+using LauraModasAPI.Dtos.CustomerDtos;
+using LauraModasAPI.Models;
 using LauraModasAPI.Services.Iservices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LauraModasAPI.Controllers
 {
 
     [ApiController]
-    [Route("v1/LauraModas/Customer")]
+    [Route("v1/LauraModas/Customers")]
     public class CustomerController : ControllerBase
     {
         readonly ICustomerServices _services;
+
 
         public CustomerController(ICustomerServices services)
         {
@@ -17,13 +21,14 @@ namespace LauraModasAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetCustomers()
         {
             try
             {
-                List<CustomerModel> customers = await _services.GetCustomers();
+                List<ReadCustomerDto> customersView = await _services.GetCustomers();
 
-                return Ok(customers);
+                return Ok(customersView);
 
             } catch (Exception ex)
             {
@@ -32,14 +37,34 @@ namespace LauraModasAPI.Controllers
         }
 
         [HttpGet]
-        [Route("customer/{id}")]
+        [Route("getCustomerById/{id}")]
+        [Authorize]
         public async Task<IActionResult> GetCustomer([FromRoute] int id)
         {
             try
             {
-                CustomerModel customer = await _services.GetCustomer(id);
+                ReadCustomerDto customerView = await _services.GetCustomer(id);
 
-                return Ok(customer);
+                return Ok(customerView);
+
+            } catch (Exception ex)
+            {
+                throw new Exception($"{ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [Route("getCustomerByName")]
+        [Authorize]
+        public async Task<IActionResult> GetCustomerByName([FromBody] GetCustomerForNameDto customer)
+        {
+            try
+            {
+
+                List<ReadCustomerDto> customersView = await _services.GetCustomerByName(customer.Name);
+
+                return Ok(customersView);
+
             } catch (Exception ex)
             {
                 throw new Exception($"{ex.Message}");
@@ -48,13 +73,19 @@ namespace LauraModasAPI.Controllers
 
         [HttpPost]
         [Route("postCustomer")]
-        public async Task<IActionResult> PostCustomer([FromBody] CustomerModel customer)
+        [Authorize]
+        public async Task<IActionResult> PostCustomer([FromBody] CreateCustomerDto request)
         {
             try
-            {   
-                await _services.PostCustomer(customer);
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
 
-                return Created($"v1/LauraModas/Customer/{customer.Id}", customer);
+                ReadCustomerDto customerView = await _services.PostCustomer(request);
+
+                return Created($"v1/LauraModas/Customers/getGustomer/{customerView.Id}", customerView);
 
             } catch (Exception ex)
             {
@@ -64,15 +95,14 @@ namespace LauraModasAPI.Controllers
 
         [HttpPut]
         [Route("alterCustomer/{id}")]
-        public async Task<IActionResult> AlterCustomer([FromRoute] int id, [FromBody] CustomerModel customer)
+        [Authorize]
+        public async Task<IActionResult> AlterCustomer([FromRoute] int id, [FromBody] CreateCustomerDto request)
         {
             try
             {
-                CustomerModel customerDb = await _services.GetCustomer(id);
+                ReadCustomerDto customerView = await _services.AlterCustomer(id, request);
 
-                await _services.AlterCustomer(id, customer);
-
-                return Created($"v1/LauraModas/Customer/{customerDb.Id}", customer);
+                return Created($"v1/LauraModas/Customers/{customerView.Id}", customerView);
             } catch(Exception ex)
             {
                 throw new Exception($"{ex.Message}");
@@ -81,6 +111,7 @@ namespace LauraModasAPI.Controllers
 
         [HttpDelete]
         [Route("deleteCustomer/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
             try

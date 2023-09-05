@@ -1,13 +1,16 @@
-﻿using LauraModasAPI.Models;
+﻿using LauraModasAPI.Dtos.CustomerDtos;
+using LauraModasAPI.Models;
 
 namespace LauraModasAPI.Services.Iservices
 {
     public interface ICustomerServices
     {
-        public Task<List<CustomerModel>> GetCustomers();
-        public Task<CustomerModel> GetCustomer(int id);
-        public Task<CustomerModel> PostCustomer(CustomerModel customer);
-        public Task<CustomerModel> AlterCustomer(int id, CustomerModel customer);
+        public Task<List<ReadCustomerDto>> GetCustomers();
+        public Task<ReadCustomerDto> GetCustomer(int id);
+        public Task<CustomerModel> GetCustomerModelForId(int id);
+        public Task<List<ReadCustomerDto>> GetCustomerByName(string name); 
+        public Task<ReadCustomerDto> PostCustomer(CreateCustomerDto customer);
+        public Task<ReadCustomerDto> AlterCustomer(int id, CreateCustomerDto customer);
         public Task<bool> DeleteCustomer(int id);
     }
 }
