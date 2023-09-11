@@ -13,6 +13,7 @@ namespace LauraModasAPI.Data
 
         public DbSet<CustomerModel> Customers { get; set; }
         public DbSet<BuyModel> Buys { get; set; }
+        public DbSet<InstallmentModel> Installments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

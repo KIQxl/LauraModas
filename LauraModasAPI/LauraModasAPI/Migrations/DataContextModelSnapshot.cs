@@ -17,6 +17,9 @@ namespace LauraModasAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("LauraModasAPI.Models.BuyModel", b =>
@@ -56,6 +59,9 @@ namespace LauraModasAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
 
                     b.Property<string>("Name")
                         .IsRequired()

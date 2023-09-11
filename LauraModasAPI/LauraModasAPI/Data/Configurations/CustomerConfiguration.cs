@@ -17,6 +17,9 @@ namespace LauraModasAPI.Data.Configurations
             builder.Property(p => p.Phone)
                 .HasColumnType("varchar(10)")
                 .IsRequired();
+
+            builder.Property(p => p.Amount)
+                .HasColumnType("double");
         }
     }
 }

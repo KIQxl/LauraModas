@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LauraModasAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230821205724_LauraModasDb_init")]
-    partial class LauraModasDb_init
+    [Migration("20230908200829_LauraModasInit")]
+    partial class LauraModasInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,9 @@ namespace LauraModasAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("LauraModasAPI.Models.BuyModel", b =>
@@ -59,6 +62,9 @@ namespace LauraModasAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
 
                     b.Property<string>("Name")
                         .IsRequired()

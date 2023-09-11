@@ -11,6 +11,7 @@ namespace LauraModasAPI.Profiles
             CreateMap<CreateCustomerDto, CustomerModel>().ReverseMap();
             CreateMap<CustomerModel, ReadCustomerDto>().ForMember(dto => dto.Buys, opts => opts.MapFrom(customer => customer.BuysModel));
             CreateMap<CustomerModel, ReadCustomerDtoForBuy>();
+            CreateMap<AlterCustomerDto, CustomerModel>();
         }
     }
 }

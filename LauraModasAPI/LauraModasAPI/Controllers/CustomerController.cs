@@ -96,7 +96,7 @@ namespace LauraModasAPI.Controllers
         [HttpPut]
         [Route("alterCustomer/{id}")]
         [Authorize]
-        public async Task<IActionResult> AlterCustomer([FromRoute] int id, [FromBody] CreateCustomerDto request)
+        public async Task<IActionResult> AlterCustomer([FromRoute] int id, [FromBody] AlterCustomerDto request)
         {
             try
             {

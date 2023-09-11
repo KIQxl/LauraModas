@@ -51,27 +51,16 @@ namespace LauraModasAPI.Services
 
         public async Task<string> LogUser(LoginUserDto request)
         {
-            try
+            SignInResult result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
+            if (result.Succeeded)
             {
-                var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
-
-                if (!result.Succeeded)
-                {
-                    new ApplicationException("Usuário não autenticado");
-                }
-
                 IdentityUser user = await GetUser(request);
 
                 var token = _tokenServices.GenerateToken(user);
-
                 return token;
-
-
-            } catch(Exception ex)
-            {
-                throw new Exception($"Falha ao autenticar {ex.Message}");
             }
 
+            throw new Exception("Não autenticado");
         }
 
     }

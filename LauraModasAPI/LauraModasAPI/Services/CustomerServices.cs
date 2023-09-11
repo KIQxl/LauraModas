@@ -123,7 +123,7 @@ namespace LauraModasAPI.Services
             }
         }
 
-        public async Task<ReadCustomerDto> AlterCustomer(int id, CreateCustomerDto request)
+        public async Task<ReadCustomerDto> AlterCustomer(int id, AlterCustomerDto request)
         {
             try
             {
@@ -136,6 +136,7 @@ namespace LauraModasAPI.Services
 
                 customerDb.Name = request.Name;
                 customerDb.Phone = request.Phone;
+                customerDb.Amount = request.Amount;
 
                 await _context.SaveChangesAsync();
 
@@ -169,6 +170,18 @@ namespace LauraModasAPI.Services
             {
                 throw new Exception($"{ex.Message}");
             }
+        }
+
+        public double GetAmount(CustomerModel customer)
+        {
+            double amount = 0;
+
+            foreach(var buy in customer.BuysModel)
+            {
+                amount += buy.Value;
+            }
+
+            return amount;
         }
     }
 }

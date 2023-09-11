@@ -22,7 +22,6 @@ namespace LauraModasAPI.Controllers
 
         [HttpPost]
         [Route("createUser")]
-        [Authorize]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto request)
         {
             IdentityResult result = await _userServices.CreateUser(request);
@@ -36,14 +35,22 @@ namespace LauraModasAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginUserDto request)
         {
-            var token = await _userServices.LogUser(request);
-            IdentityUser user = await _userServices.GetUser(request);
-
-            return Ok( new
+            try
             {
-                user,
-                token
-            });
+                var token = await _userServices.LogUser(request);
+                IdentityUser user = await _userServices.GetUser(request);
+
+                return Ok(new
+                {
+                    user,
+                    token
+                });
+            } catch (Exception ex)
+            {
+                return BadRequest($"Não autenticado :/");
+            }
+
+            
 
         }
 

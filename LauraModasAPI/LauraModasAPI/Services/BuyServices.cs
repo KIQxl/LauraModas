@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LauraModasAPI.Data;
 using LauraModasAPI.Dtos.BuyDtos;
+using LauraModasAPI.Dtos.CustomerDtos;
 using LauraModasAPI.Models;
 using LauraModasAPI.Services.Iservices;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,13 @@ namespace LauraModasAPI.Services
     {
         readonly DataContext _context;
         readonly IMapper _mapper;
-        public BuyServices(DataContext context, IMapper mapper)
+        readonly ICustomerServices _customerServices;
+        public BuyServices(DataContext context, IMapper mapper, ICustomerServices customerServices)
         {
             this._context = context;
             this._mapper = mapper;
+            this._customerServices = customerServices;
+
         }
         public async Task<List<ReadBuyDto>> GetBuys()
         {
@@ -96,11 +100,25 @@ namespace LauraModasAPI.Services
         {
             try
             {
-
+                
                 BuyModel buy = _mapper.Map<BuyModel>(request);
 
                 _context.Buys.Add(buy);
                 await _context.SaveChangesAsync();
+
+                CustomerModel customerDb = await _customerServices.GetCustomerModelForId(request.CustomerModelId);
+
+                double amount = _customerServices.GetAmount(customerDb);
+
+                AlterCustomerDto customerRequest = new AlterCustomerDto
+                {
+                    Name = customerDb.Name,
+                    Phone = customerDb.Phone,
+                    Amount = amount
+                };
+
+
+                await _customerServices.AlterCustomer(customerDb.Id, customerRequest);
 
                 ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
 
