@@ -2,6 +2,7 @@
 using LauraModasAPI.Data;
 using LauraModasAPI.Dtos.BuyDtos;
 using LauraModasAPI.Dtos.CustomerDtos;
+using LauraModasAPI.Dtos.InstallmentDtos;
 using LauraModasAPI.Models;
 using LauraModasAPI.Services.Iservices;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,12 @@ namespace LauraModasAPI.Services
     {
         readonly DataContext _context;
         readonly IMapper _mapper;
-        readonly ICustomerServices _customerServices;
-        public BuyServices(DataContext context, IMapper mapper, ICustomerServices customerServices)
+        IInstallmentServices _installmentServices;
+        public BuyServices(DataContext context, IMapper mapper, IInstallmentServices installmentServices)
         {
             this._context = context;
             this._mapper = mapper;
-            this._customerServices = customerServices;
+            this._installmentServices = installmentServices;
 
         }
         public async Task<List<ReadBuyDto>> GetBuys()
@@ -100,25 +101,22 @@ namespace LauraModasAPI.Services
         {
             try
             {
-                
                 BuyModel buy = _mapper.Map<BuyModel>(request);
 
                 _context.Buys.Add(buy);
+
+                InstallmentModel installment = await _installmentServices.GetInstallment(request.CustomerModelId);
+
+                installment.TotalValue += request.Value;
+                installment.RemainingValue += request.Value;
+
                 await _context.SaveChangesAsync();
 
-                CustomerModel customerDb = await _customerServices.GetCustomerModelForId(request.CustomerModelId);
-
-                double amount = _customerServices.GetAmount(customerDb);
-
-                AlterCustomerDto customerRequest = new AlterCustomerDto
+                await _installmentServices.Parcel(new CreateInstallment
                 {
-                    Name = customerDb.Name,
-                    Phone = customerDb.Phone,
-                    Amount = amount
-                };
-
-
-                await _customerServices.AlterCustomer(customerDb.Id, customerRequest);
+                    CustomerId = request.CustomerModelId,
+                    NumberOfInstallments = 1
+                });
 
                 ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
 
@@ -128,7 +126,6 @@ namespace LauraModasAPI.Services
             {
                 throw new Exception($"{ex.Message}");
             }
-
         }
 
         public async Task<ReadBuyDto> AlterBuy(int id, AlterBuyDto request)

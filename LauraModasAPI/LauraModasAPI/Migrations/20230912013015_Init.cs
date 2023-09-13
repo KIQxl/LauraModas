@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LauraModasAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class LauraModasInit : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,8 +24,7 @@ namespace LauraModasAPI.Migrations
                     Name = table.Column<string>(type: "varchar(100)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Phone = table.Column<string>(type: "varchar(10)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Amount = table.Column<double>(type: "double", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -60,6 +59,29 @@ namespace LauraModasAPI.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Installments",
+                columns: table => new
+                {
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NumberOfInstallments = table.Column<int>(type: "int", nullable: false),
+                    TotalValue = table.Column<double>(type: "double", nullable: false),
+                    InstallmentValue = table.Column<double>(type: "double", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Installments", x => x.CustomerId);
+                    table.ForeignKey(
+                        name: "FK_Installments_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Buys_CustomerModelId",
                 table: "Buys",
@@ -71,6 +93,9 @@ namespace LauraModasAPI.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Buys");
+
+            migrationBuilder.DropTable(
+                name: "Installments");
 
             migrationBuilder.DropTable(
                 name: "Customers");

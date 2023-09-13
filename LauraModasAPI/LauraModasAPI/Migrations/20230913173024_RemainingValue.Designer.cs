@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LauraModasAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230908200829_LauraModasInit")]
-    partial class LauraModasInit
+    [Migration("20230913173024_RemainingValue")]
+    partial class RemainingValue
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,9 +63,6 @@ namespace LauraModasAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("double");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
@@ -79,6 +76,32 @@ namespace LauraModasAPI.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("LauraModasAPI.Models.InstallmentModel", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("InstallmentValue")
+                        .HasColumnType("double");
+
+                    b.Property<int>("NumberOfInstallments")
+                        .HasColumnType("int");
+
+                    b.Property<double>("RemainingValue")
+                        .HasColumnType("double");
+
+                    b.Property<double>("TotalValue")
+                        .HasColumnType("double");
+
+                    b.HasKey("CustomerId");
+
+                    b.ToTable("Installments");
+                });
+
             modelBuilder.Entity("LauraModasAPI.Models.BuyModel", b =>
                 {
                     b.HasOne("LauraModasAPI.Models.CustomerModel", "CustomerModel")
@@ -90,9 +113,23 @@ namespace LauraModasAPI.Migrations
                     b.Navigation("CustomerModel");
                 });
 
+            modelBuilder.Entity("LauraModasAPI.Models.InstallmentModel", b =>
+                {
+                    b.HasOne("LauraModasAPI.Models.CustomerModel", "Customer")
+                        .WithOne("Installment")
+                        .HasForeignKey("LauraModasAPI.Models.InstallmentModel", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("LauraModasAPI.Models.CustomerModel", b =>
                 {
                     b.Navigation("BuysModel");
+
+                    b.Navigation("Installment")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -8,7 +8,5 @@ namespace LauraModasAPI.Dtos.CustomerDtos
 
         [MaxLength(10, ErrorMessage = "Telefone Inválido")]
         public string Phone { get; set; }
-        public double Amount = 0;
-
     }
 }

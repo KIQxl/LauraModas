@@ -19,6 +19,7 @@ namespace LauraModasAPI.Data
         {
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new BuyConfiguration());
+            modelBuilder.ApplyConfiguration(new InstallmentConfiguration());
         }
     }
 }

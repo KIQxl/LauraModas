@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using LauraModasAPI.Data;
 using LauraModasAPI.Dtos.CustomerDtos;
+using LauraModasAPI.Dtos.InstallmentDtos;
 using LauraModasAPI.Models;
-using LauraModasAPI.Profiles;
 using LauraModasAPI.Services.Iservices;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace LauraModasAPI.Services
 {
@@ -110,6 +109,19 @@ namespace LauraModasAPI.Services
             {
                 CustomerModel customer = _mapper.Map<CustomerModel>(request);
 
+                InstallmentModel installment = new InstallmentModel
+                {
+                    CustomerId = customer.Id,
+                    CustomerName = customer.Name,
+                    TotalValue = 0,
+                    NumberOfInstallments = 0,
+                    InstallmentValue = 0,
+                    RemainingValue = 0,
+                };
+
+                customer.Installment = installment;
+
+                await _context.Installments.AddAsync(installment);
                 await _context.Customers.AddAsync(customer);
                 await _context.SaveChangesAsync();
 
@@ -136,7 +148,6 @@ namespace LauraModasAPI.Services
 
                 customerDb.Name = request.Name;
                 customerDb.Phone = request.Phone;
-                customerDb.Amount = request.Amount;
 
                 await _context.SaveChangesAsync();
 
@@ -158,7 +169,7 @@ namespace LauraModasAPI.Services
                 if (customerDB != null)
                 {
                     _context.Customers.Remove(customerDB);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
                     return true;
                 }

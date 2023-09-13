@@ -81,16 +81,21 @@ namespace LauraModasAPI.Controllers
         {
             try
             {
-                CustomerModel customer = await _customerServices.GetCustomerModelForId(request.CustomerModelId);
-
-                if (customer == null)
+                if (ModelState.IsValid)
                 {
-                    return NotFound();
+                    CustomerModel customer = await _customerServices.GetCustomerModelForId(request.CustomerModelId);
+
+                    if (customer == null)
+                    {
+                        return NotFound();
+                    }
+
+                    ReadBuyDto buyView = await _services.PostBuy(request);
+
+                    return Created($"v1/LauraModas/Buy/getBuy/{buyView.Id}", buyView);
                 }
 
-                ReadBuyDto buyView = await _services.PostBuy(request);
-
-                return Created($"v1/LauraModas/Buy/getBuy/{buyView.Id}", buyView);
+                throw new Exception("Modelo inválido");
 
             } catch (Exception ex)
             {

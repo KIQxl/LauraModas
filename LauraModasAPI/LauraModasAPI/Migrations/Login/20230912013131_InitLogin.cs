@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LauraModasAPI.Migrations.Login
 {
     /// <inheritdoc />
-    public partial class LoginContextInit : Migration
+    public partial class InitLogin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LauraModasAPI.Migrations.Login
 {
     [DbContext(typeof(LoginContext))]
-    [Migration("20230908200851_LoginContextInit")]
-    partial class LoginContextInit
+    [Migration("20230912013131_InitLogin")]
+    partial class InitLogin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
