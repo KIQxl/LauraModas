@@ -28,11 +28,16 @@ namespace LauraModasAPI.Controllers
             {
                 List<ReadCustomerDto> customersView = await _services.GetCustomers();
 
+                if(customersView == null)
+                {
+                    return NotFound();
+                }
+
                 return Ok(customersView);
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -45,11 +50,16 @@ namespace LauraModasAPI.Controllers
             {
                 ReadCustomerDto customerView = await _services.GetCustomer(id);
 
+                if (customerView == null)
+                {
+                    return NotFound();
+                }
+
                 return Ok(customerView);
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -60,14 +70,18 @@ namespace LauraModasAPI.Controllers
         {
             try
             {
-
                 List<ReadCustomerDto> customersView = await _services.GetCustomerByName(customer.Name);
+
+                if (customersView == null)
+                {
+                    return NotFound();
+                }
 
                 return Ok(customersView);
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -85,11 +99,16 @@ namespace LauraModasAPI.Controllers
 
                 ReadCustomerDto customerView = await _services.PostCustomer(request);
 
-                return Created($"v1/LauraModas/Customers/getGustomer/{customerView.Id}", customerView);
+                if(customerView == null)
+                {
+                    return BadRequest();
+                }
+
+                return Created($"v1/LauraModas/Customers/getCustomer/{customerView.Id}", customerView);
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -102,10 +121,15 @@ namespace LauraModasAPI.Controllers
             {
                 ReadCustomerDto customerView = await _services.AlterCustomer(id, request);
 
+                if (customerView == null)
+                {
+                    return BadRequest();
+                }
+
                 return Created($"v1/LauraModas/Customers/{customerView.Id}", customerView);
             } catch(Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -122,7 +146,7 @@ namespace LauraModasAPI.Controllers
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
     }

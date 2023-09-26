@@ -30,11 +30,16 @@ namespace LauraModasAPI.Controllers
             {
                 List<ReadBuyDto> buysView = await _services.GetBuys();
 
+                if (buysView == null)
+                {
+                    return NotFound();
+                }
+
                 return Ok(buysView);
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
 
         }
@@ -48,11 +53,16 @@ namespace LauraModasAPI.Controllers
             {
                 ReadBuyDto buyView = await _services.GetBuy(id);
 
+                if (buyView == null)
+                {
+                    return BadRequest("Não encontrado");
+                }
+
                 return Ok(buyView);
 
             } catch(Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -63,14 +73,18 @@ namespace LauraModasAPI.Controllers
         {
             try
             {
-
                 List<ReadBuyDto> buysView = await _services.GetBuysByName(buy.Name);
+
+                if (buysView == null)
+                {
+                    return BadRequest("Não encontrado");
+                }
 
                 return Ok(buysView);
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -87,7 +101,7 @@ namespace LauraModasAPI.Controllers
 
                     if (customer == null)
                     {
-                        return NotFound();
+                        return BadRequest("Cliente não encontrado");
                     }
 
                     ReadBuyDto buyView = await _services.PostBuy(request);
@@ -95,11 +109,11 @@ namespace LauraModasAPI.Controllers
                     return Created($"v1/LauraModas/Buy/getBuy/{buyView.Id}", buyView);
                 }
 
-                throw new Exception("Modelo inválido");
+                return BadRequest("Modelo inválido");
 
             } catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"{ex.Message}");
             }
         }
 
@@ -112,11 +126,16 @@ namespace LauraModasAPI.Controllers
             {
                 ReadBuyDto buyView = await _services.AlterBuy(id, request);
 
+                if (buyView == null)
+                {
+                    return BadRequest("Não encontrado");
+                }
+
                 return Created($"v1/LauraModas/Buy/getBuy/{buyView.Id}", buyView);
             }
             catch (Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -128,10 +147,11 @@ namespace LauraModasAPI.Controllers
             try
             {
                 bool delete = await _services.DeleteBuy(id);
+
                 return Ok(delete);
             } catch(Exception ex)
             {
-                throw new Exception($"{ex.Message}");
+                return BadRequest($"Houve um erro. {ex.Message}");
             }
         }
     }

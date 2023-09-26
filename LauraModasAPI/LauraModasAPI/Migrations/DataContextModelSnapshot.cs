@@ -41,9 +41,6 @@ namespace LauraModasAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(200)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<double>("Value")
                         .HasColumnType("double");
 

@@ -19,88 +19,43 @@ namespace LauraModasAPI.Services
             this._context = context;
             this._mapper = mapper;
             this._installmentServices = installmentServices;
-
         }
         public async Task<List<ReadBuyDto>> GetBuys()
         {
-            try
-            {
                 List<BuyModel> buys = await _context.Buys.ToListAsync();
 
                 List<ReadBuyDto> buysView = _mapper.Map<List<ReadBuyDto>>(buys);
 
-                return buysView;
-
-            } catch (Exception ex)
-            {
-                throw new Exception($"{ex.Message}");
-            }
-            
+                return buysView;           
         }
         public async Task<ReadBuyDto> GetBuy(int id)
         {
-            try
-            {
                 BuyModel buy = await _context.Buys.FirstOrDefaultAsync(b => b.Id.Equals(id));
-
-                if (buy == null)
-                {
-                    throw new Exception("Compra não encontrada");
-                }
 
                 ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
 
-                return buyView;
-
-            } catch (Exception ex) 
-            {
-                throw new Exception($"{ex.Message}");
-            }
+                return buyView;            
         }
 
         public async Task<BuyModel> GetBuyModelForId(int id)
-        {
-            try
-            {
+        {           
                 BuyModel buy = _context.Buys.FirstOrDefault(b => b.Id.Equals(id));
-
-                if (buy == null) throw new Exception("Não encontrado");
                 
                 return buy;
-
-            } catch (Exception ex)
-            {
-                throw new Exception($"{ex.Message}");
-            }
         }
 
         public async Task<List<ReadBuyDto>> GetBuysByName(string name)
         {
-            try
-            {
-
                 List<BuyModel> buys = _context.Buys.Where(b => b.Name.ToUpper().Contains(name.ToUpper())).ToList();
-
-                if (buys.Count == 0)
-                {
-                    throw new Exception($"Nenhuma compra corresponde a {name}");
-                }
 
                 List<ReadBuyDto> buysViews = _mapper.Map<List<ReadBuyDto>>(buys);
 
                 return buysViews;
-
-            } catch (Exception ex)
-            {
-                throw new Exception($"{ex.Message}");
-            }
         }
 
 
         public async Task<ReadBuyDto> PostBuy(CreateBuyDto request)
         {
-            try
-            {
                 BuyModel buy = _mapper.Map<BuyModel>(request);
 
                 _context.Buys.Add(buy);
@@ -122,57 +77,40 @@ namespace LauraModasAPI.Services
 
                 return buyView;
 
-            } catch (Exception ex) 
-            {
-                throw new Exception($"{ex.Message}");
-            }
         }
 
         public async Task<ReadBuyDto> AlterBuy(int id, AlterBuyDto request)
         {
-            try
-            {
-                BuyModel buy = await GetBuyModelForId(id);
+            BuyModel buy = await GetBuyModelForId(id);
 
-                if(buy == null) throw new Exception($"Não foi possível encontrar a compra");
-                
-                buy.Name = request.Name;
-                buy.Value = request.Value;
-                buy.Description = request.Description;
-                buy.Status = request.Status;
+            buy.Name = request.Name;
+            buy.Name = request.Name;
+            buy.Description = request.Description;
 
-                await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-                ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
+            ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
 
-                return buyView;
-
-            } catch (Exception ex)
-            {
-                throw new Exception($"{ex.Message}");
-            }
+            return buyView;
         }
 
         public async Task<bool> DeleteBuy(int id)
         {
-            try
-            {
-                BuyModel buyDb = await GetBuyModelForId(id);
+            BuyModel buyDb = await GetBuyModelForId(id);
+            InstallmentModel installment = await _installmentServices.GetInstallment(buyDb.CustomerModelId);
+            installment.TotalValue -= buyDb.Value;
+            installment.RemainingValue -= buyDb.Value;
 
-                if (buyDb != null)
-                {
-                    _context.Remove(buyDb);
-                    _context.SaveChangesAsync();
+            _context.Remove(buyDb);
+            await _context.SaveChangesAsync();
 
-                    return true;
-                } else
-                {
-                    return false;
-                }
-            } catch (Exception ex)
+            await _installmentServices.Parcel(new CreateInstallment
             {
-                throw new Exception($"{ex.Message}");
-            }
+                CustomerId = buyDb.CustomerModelId,
+                NumberOfInstallments = 1
+            });
+
+            return true;
         }
 
 

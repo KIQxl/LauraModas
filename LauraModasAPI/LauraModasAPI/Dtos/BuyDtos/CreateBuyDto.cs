@@ -9,8 +9,6 @@ namespace LauraModasAPI.Dtos.BuyDtos
         public string? Description { get; set; }
 
         public DateTime Date = DateTime.Now;
-
-        public PurchaseEnum Status = PurchaseEnum.NaoPago;
         public int CustomerModelId { get; set; }
 
     }

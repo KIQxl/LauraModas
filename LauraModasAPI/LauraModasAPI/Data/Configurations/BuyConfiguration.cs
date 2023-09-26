@@ -23,10 +23,6 @@ namespace LauraModasAPI.Data.Configurations
             builder.Property(p => p.Description)
                 .HasColumnType("varchar(350)");
 
-            builder.Property(p => p.Status)
-                .HasColumnType("int")
-                .IsRequired();
-
             builder.Property(p => p.CustomerModelId)
                 .HasColumnType("int")
                 .IsRequired();

@@ -30,23 +30,12 @@ namespace LauraModasAPI.Services
         public async Task<IdentityResult> CreateUser(CreateUserDto request)
         {
 
-            try
-            {
+           
                 IdentityUser user = _mapper.Map<IdentityUser>(request);
 
                 IdentityResult result = await _userManager.CreateAsync(user, request.Password);
 
-                if (!result.Succeeded)
-                {
-                    throw new Exception("Falha ao criar usuário");
-                }
-
-                return result;
-            } catch (Exception ex)
-            {
-                throw new Exception($"Falha ao criar usuário: {request.ToString()}");
-            }
-            
+                return result;         
         }
 
         public async Task<string> LogUser(LoginUserDto request)

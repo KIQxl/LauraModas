@@ -28,28 +28,6 @@ namespace LauraModasAPI.Services
 
             double totalValue = _customerServices.GetAmount(customer);
 
-            if (installment == null)
-            {
-                double installmentValue = totalValue / request.NumberOfInstallments;
-
-                InstallmentModel newInstallment = new InstallmentModel
-                {
-                    CustomerId = customer.Id,
-                    CustomerName = customer.Name,
-                    NumberOfInstallments = request.NumberOfInstallments,
-                    TotalValue = totalValue,
-                    InstallmentValue = installmentValue,
-                    RemainingValue = totalValue
-                };
-
-                await _context.Installments.AddAsync(newInstallment);
-                await _context.SaveChangesAsync();
-
-                ReadInstallment newInstallmentView = _mapper.Map<ReadInstallment>(newInstallment);
-
-                return newInstallmentView;
-            }
-
             double newInstallmentValue = installment.RemainingValue / request.NumberOfInstallments;
 
             installment.TotalValue = totalValue;
@@ -86,11 +64,28 @@ namespace LauraModasAPI.Services
             installment.NumberOfInstallments -= 1;
             installment.RemainingValue -= installment.InstallmentValue;
 
+            if(installment.NumberOfInstallments == 0)
+            {
+                installment.RemainingValue = 0;
+                await _context.SaveChangesAsync();
+
+            }
+
             await _context.SaveChangesAsync();
 
             ReadInstallment installmentView = _mapper.Map<ReadInstallment>(installment);
 
             return installmentView;
+        }
+
+        public async Task<ReadInstallment> GetInstallmentForId(int id)
+        {
+
+            InstallmentModel installment = await GetInstallment(id);
+
+            ReadInstallment installmentView = _mapper.Map<ReadInstallment>(installment);
+
+            return installmentView;            
         }
     }
 }

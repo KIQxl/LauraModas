@@ -24,9 +24,26 @@ namespace LauraModasAPI.Controllers
         [Route("createUser")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto request)
         {
-            IdentityResult result = await _userServices.CreateUser(request);
 
-            return Ok("Usuário Cadastrado");
+            try
+            {
+                IdentityResult result = await _userServices.CreateUser(request);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest("Falha ao criar usuário");
+                }
+
+                return Ok(new
+                {
+                    message = "Usuário Cadastrado",
+                    result = result
+                });
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
         }
 
@@ -38,7 +55,13 @@ namespace LauraModasAPI.Controllers
             try
             {
                 var token = await _userServices.LogUser(request);
+
                 IdentityUser user = await _userServices.GetUser(request);
+
+                if (user == null) 
+                {
+                    return BadRequest();
+                }
 
                 return Ok(new
                 {
@@ -47,17 +70,11 @@ namespace LauraModasAPI.Controllers
                 });
             } catch (Exception ex)
             {
-                return BadRequest($"Não autenticado :/");
+                return BadRequest(ex.Message);
             }
-
-            
-
         }
 
-        [HttpGet]
-        [Route("auth")]
-        [Authorize()]
-        public string Test() => $"Autorizado - {User.Identity.Name}";
+
     }
 }
  

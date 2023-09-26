@@ -44,6 +44,11 @@ namespace LauraModasAPI.Controllers
             {
                 ReadInstallment installment = await _InstallmentServices.PayInstallment(id);
 
+                if (installment == null)
+                {
+                    return NotFound();
+                }
+
                 return Ok(installment);
 
             } catch (Exception ex)
@@ -51,6 +56,24 @@ namespace LauraModasAPI.Controllers
                 throw new Exception($"Houve um erro no pagamento: {ex.Message}");
             }
             
+        }
+
+        [HttpGet]
+        [Route("getInstallment/{id}")]
+        public async Task<IActionResult> GetInstallment([FromRoute] int id)
+        {
+            try
+            {
+                ReadInstallment installment = await _InstallmentServices.GetInstallmentForId(id);
+
+                if (installment == null) return NotFound();
+
+                return Ok(installment);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest($"{ex.Message} aaaa");
+            }
         }
     }
 }

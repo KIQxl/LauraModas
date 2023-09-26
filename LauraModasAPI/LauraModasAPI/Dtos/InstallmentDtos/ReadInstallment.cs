@@ -6,7 +6,6 @@ namespace LauraModasAPI.Dtos.InstallmentDtos
     public class ReadInstallment
     {
         public int CustomerId { get; set; }
-        public string CustomerName { get; set; }
         public int NumberOfInstallments { get; set; }
         public double TotalValue { get; set; }
         public double InstallmentValue { get; set; }
