@@ -66,7 +66,7 @@ namespace LauraModasAPI.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("getBuyByName")]
         [Authorize]
         public async Task<IActionResult> GetBuyByName(GetBuyByNameDto buy)

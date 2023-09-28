@@ -61,15 +61,20 @@ namespace LauraModasAPI.Services
 
             InstallmentModel installment = await GetInstallment(id);
 
-            installment.NumberOfInstallments -= 1;
-            installment.RemainingValue -= installment.InstallmentValue;
-
-            if(installment.NumberOfInstallments == 0)
+            if (installment.NumberOfInstallments <= 0 || installment.RemainingValue <= 0)
             {
                 installment.RemainingValue = 0;
+                installment.InstallmentValue = 0;
+                installment.NumberOfInstallments = 0;
                 await _context.SaveChangesAsync();
 
+                ReadInstallment installmentPaid = _mapper.Map<ReadInstallment>(installment);
+
+                return installmentPaid;
             }
+
+            installment.NumberOfInstallments -= 1;
+            installment.RemainingValue -= installment.InstallmentValue;
 
             await _context.SaveChangesAsync();
 
