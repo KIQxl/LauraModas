@@ -98,17 +98,25 @@ namespace LauraModasAPI.Services
         {
             BuyModel buyDb = await GetBuyModelForId(id);
             InstallmentModel installment = await _installmentServices.GetInstallment(buyDb.CustomerModelId);
-            installment.TotalValue -= buyDb.Value;
             installment.RemainingValue -= buyDb.Value;
 
             _context.Remove(buyDb);
             await _context.SaveChangesAsync();
 
-            await _installmentServices.Parcel(new CreateInstallment
+            ReadInstallment settedInstalment = await _installmentServices.Parcel(new CreateInstallment
             {
                 CustomerId = buyDb.CustomerModelId,
                 NumberOfInstallments = 1
             });
+
+            if (settedInstalment.RemainingValue <= 0)
+            {
+                installment.RemainingValue = 0;
+                installment.InstallmentValue = 0;
+                installment.NumberOfInstallments = 0;
+
+                await _context.SaveChangesAsync();
+            }
 
             return true;
         }
