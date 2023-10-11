@@ -8,6 +8,6 @@ namespace LauraModasAPI.Services.Iservices
         public Task<ReadInstallment> Parcel(CreateInstallment request);
         public Task<InstallmentModel> GetInstallment(int id);
         public Task<ReadInstallment> PayInstallment(int id);
-        public Task<ReadInstallment> GetInstallmentForId(int id);
+        public Task<ReadInstallment> GetReadInstallment(int id);
     }
 }

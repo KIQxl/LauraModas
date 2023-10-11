@@ -12,6 +12,6 @@ namespace LauraModasAPI.Services.Iservices
         public Task<ReadCustomerDto> PostCustomer(CreateCustomerDto customer);
         public Task<ReadCustomerDto> AlterCustomer(int id, AlterCustomerDto customer);
         public Task<bool> DeleteCustomer(int id);
-        public double GetAmount(CustomerModel customer);
+        public Task<(double, double)> GetParcelValue(int id);
     }
 }

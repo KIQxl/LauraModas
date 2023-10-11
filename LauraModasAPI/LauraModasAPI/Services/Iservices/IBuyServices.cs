@@ -12,6 +12,9 @@ namespace LauraModasAPI.Services.Iservices
         public Task<List<ReadBuyDto>> GetBuysByName(string name);
         public Task<ReadBuyDto> PostBuy(CreateBuyDto request);
         public Task<ReadBuyDto> AlterBuy(int id, AlterBuyDto request);
+        public Task<ReadBuyDto> ParcelBuy(ParcelBuyDto request);
+        public Task<ReadBuyDto> PayBuy(int id);
+        public Task<List<ReadBuyDto>> GetBuyByDateRange(GetBuyByDateRangeDto dateRange);
         public Task<bool> DeleteBuy(int id);
     }
 }

@@ -30,6 +30,16 @@ namespace LauraModasAPI.Data.Configurations
             builder.Property(p => p.Date)
                 .HasColumnType("Date");
 
+            builder.Property(p => p.NumberOfInstallments)
+                .HasColumnType("int");
+
+            builder.Property(p => p.InstallmentValue)
+                .HasColumnType("double");
+
+            builder.Property(p => p.DateOfPayment)
+                .HasColumnType("Date")
+                .IsRequired();
+
         }
     }
 }

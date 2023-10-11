@@ -4,5 +4,6 @@
     {
         public int CustomerId { get; set; }
         public int NumberOfInstallments { get; set; }
+        public DateOnly DateOfPayment { get; set; }
     }
 }

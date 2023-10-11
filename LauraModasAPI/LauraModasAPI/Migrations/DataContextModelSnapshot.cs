@@ -34,12 +34,24 @@ namespace LauraModasAPI.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
+                    b.Property<DateOnly>("DateOfPayment")
+                        .HasColumnType("Date");
+
                     b.Property<string>("Description")
                         .HasColumnType("varchar(350)");
+
+                    b.Property<double>("InstallmentValue")
+                        .HasColumnType("double");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(200)");
+
+                    b.Property<int>("NumberOfInstallments")
+                        .HasColumnType("int");
+
+                    b.Property<double>("RemainingValue")
+                        .HasColumnType("double");
 
                     b.Property<double>("Value")
                         .HasColumnType("double");
@@ -78,6 +90,9 @@ namespace LauraModasAPI.Migrations
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateOnly?>("DateOfPayment")
+                        .HasColumnType("date");
 
                     b.Property<double>("InstallmentValue")
                         .HasColumnType("double");

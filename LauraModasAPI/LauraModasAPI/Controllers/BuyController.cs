@@ -91,25 +91,13 @@ namespace LauraModasAPI.Controllers
         [HttpPost]
         [Route("postBuy")]
         [Authorize]
-        public async Task<IActionResult> PostBuy([FromBody] CreateBuyDto request, [FromServices] ICustomerServices _customerServices)
+        public async Task<IActionResult> PostBuy([FromBody] CreateBuyDto request)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    CustomerModel customer = await _customerServices.GetCustomerModelForId(request.CustomerModelId);
+                ReadBuyDto buyView = await _services.PostBuy(request);
 
-                    if (customer == null)
-                    {
-                        return BadRequest("Cliente não encontrado");
-                    }
-
-                    ReadBuyDto buyView = await _services.PostBuy(request);
-
-                    return Created($"v1/LauraModas/Buy/getBuy/{buyView.Id}", buyView);
-                }
-
-                return BadRequest("Modelo inválido");
+                return Created($"v1/LauraModas/Buy/getBuy/{buyView.Id}", buyView);
 
             } catch (Exception ex)
             {
@@ -154,5 +142,57 @@ namespace LauraModasAPI.Controllers
                 return BadRequest($"Houve um erro. {ex.Message}");
             }
         }
+
+        [HttpPost]
+        [Route("parcelBuy")]
+        [Authorize]
+        public async Task<IActionResult> ParcelBuy([FromBody] ParcelBuyDto request)
+        {
+            try
+            {
+                ReadBuyDto buy = await _services.ParcelBuy(request);
+
+                return Ok(buy);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
+        [HttpPost]
+        [Route("payBuy/{id}")]
+        [Authorize]
+        public async Task<IActionResult> PayBuy([FromRoute] int id)
+        {
+            try
+            {
+                ReadBuyDto buy = await _services.PayBuy(id);
+
+                return Ok(buy);
+            } catch( Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
+        [HttpPost]
+        [Route("getBuyByDateRange")]
+        [Authorize]
+        public async Task<IActionResult> GetBuyByDateRange([FromBody] GetBuyByDateRangeDto dateRange)
+        {
+            try
+            {
+                List<ReadBuyDto> buys = await _services.GetBuyByDateRange(dateRange);
+
+                return Ok(buys);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

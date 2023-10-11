@@ -26,14 +26,16 @@ namespace LauraModasAPI.Services
 
             CustomerModel customer = await _customerServices.GetCustomerModelForId(request.CustomerId);
 
-            double totalValue = _customerServices.GetAmount(customer);
+            var dataBuys = await _customerServices.GetParcelValue(request.CustomerId);
 
-            double newInstallmentValue = installment.RemainingValue / request.NumberOfInstallments;
+            double installmentValue = dataBuys.Item1 / request.NumberOfInstallments;
 
-            installment.TotalValue = totalValue;
+            installment.RemainingValue = dataBuys.Item1;
+            installment.TotalValue = dataBuys.Item2;
             installment.NumberOfInstallments = request.NumberOfInstallments;
             installment.CustomerName = customer.Name;
-            installment.InstallmentValue = newInstallmentValue;
+            installment.InstallmentValue = installmentValue;
+            installment.DateOfPayment = request.DateOfPayment;
 
             await _context.SaveChangesAsync();
 
@@ -61,17 +63,6 @@ namespace LauraModasAPI.Services
 
             InstallmentModel installment = await GetInstallment(id);
 
-            if (installment.NumberOfInstallments <= 0 || installment.RemainingValue <= 0)
-            {
-                installment.RemainingValue = 0;
-                installment.InstallmentValue = 0;
-                installment.NumberOfInstallments = 0;
-                await _context.SaveChangesAsync();
-
-                ReadInstallment installmentPaid = _mapper.Map<ReadInstallment>(installment);
-
-                return installmentPaid;
-            }
 
             installment.NumberOfInstallments -= 1;
             installment.RemainingValue -= installment.InstallmentValue;
@@ -80,10 +71,32 @@ namespace LauraModasAPI.Services
 
             ReadInstallment installmentView = _mapper.Map<ReadInstallment>(installment);
 
+            if (installment.NumberOfInstallments <= 0)
+            {
+                installment.RemainingValue = 0;
+                installment.InstallmentValue = 0;
+                installment.NumberOfInstallments = 0;
+
+                List<BuyModel> buys = customer.BuysModel;
+
+                foreach (BuyModel buy in buys)
+                {
+                    buy.RemainingValue = 0;
+                    buy.InstallmentValue = 0;
+                    buy.NumberOfInstallments = 0;
+                }
+
+                await _context.SaveChangesAsync();
+
+                ReadInstallment installmentPaid = _mapper.Map<ReadInstallment>(installment);
+
+                return installmentPaid;
+            }
+
             return installmentView;
         }
 
-        public async Task<ReadInstallment> GetInstallmentForId(int id)
+        public async Task<ReadInstallment> GetReadInstallment(int id)
         {
 
             InstallmentModel installment = await GetInstallment(id);

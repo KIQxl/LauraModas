@@ -5,6 +5,7 @@ using LauraModasAPI.Dtos.InstallmentDtos;
 using LauraModasAPI.Models;
 using LauraModasAPI.Services.Iservices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace LauraModasAPI.Services
 {
@@ -96,16 +97,22 @@ namespace LauraModasAPI.Services
             return true;
         }
 
-        public double GetAmount(CustomerModel customer)
+        public async Task<(double, double)> GetParcelValue(int id)
         {
-            double amount = 0;
+            CustomerModel customer = await GetCustomerModelForId(id);
 
-            foreach(var buy in customer.BuysModel)
+            List<BuyModel> buys = customer.BuysModel;
+
+            double remainingValueBuys = 0;
+            double totalValueBuys = 0;
+
+            foreach(BuyModel buy in buys)
             {
-                amount += buy.Value;
+                remainingValueBuys += buy.RemainingValue;
+                totalValueBuys += buy.Value;
             }
 
-            return amount;
+            return (remainingValueBuys, totalValueBuys);
         }
     }
 }

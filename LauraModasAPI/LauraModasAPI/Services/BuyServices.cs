@@ -13,12 +13,10 @@ namespace LauraModasAPI.Services
     {
         readonly DataContext _context;
         readonly IMapper _mapper;
-        IInstallmentServices _installmentServices;
-        public BuyServices(DataContext context, IMapper mapper, IInstallmentServices installmentServices)
+        public BuyServices(DataContext context, IMapper mapper)
         {
             this._context = context;
             this._mapper = mapper;
-            this._installmentServices = installmentServices;
         }
         public async Task<List<ReadBuyDto>> GetBuys()
         {
@@ -56,27 +54,17 @@ namespace LauraModasAPI.Services
 
         public async Task<ReadBuyDto> PostBuy(CreateBuyDto request)
         {
-                BuyModel buy = _mapper.Map<BuyModel>(request);
+            BuyModel buy = _mapper.Map<BuyModel>(request);
 
-                _context.Buys.Add(buy);
+            buy.InstallmentValue = request.Value / request.NumberOfInstallments;
+            buy.RemainingValue = request.Value;
 
-                InstallmentModel installment = await _installmentServices.GetInstallment(request.CustomerModelId);
+            await _context.Buys.AddAsync(buy);
+            await _context.SaveChangesAsync();
 
-                installment.TotalValue += request.Value;
-                installment.RemainingValue += request.Value;
+            ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
 
-                await _context.SaveChangesAsync();
-
-                await _installmentServices.Parcel(new CreateInstallment
-                {
-                    CustomerId = request.CustomerModelId,
-                    NumberOfInstallments = 1
-                });
-
-                ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
-
-                return buyView;
-
+            return buyView;
         }
 
         public async Task<ReadBuyDto> AlterBuy(int id, AlterBuyDto request)
@@ -84,8 +72,8 @@ namespace LauraModasAPI.Services
             BuyModel buy = await GetBuyModelForId(id);
 
             buy.Name = request.Name;
-            buy.Name = request.Name;
             buy.Description = request.Description;
+            buy.DateOfPayment = request.DateOfPayment;
 
             await _context.SaveChangesAsync();
 
@@ -97,30 +85,59 @@ namespace LauraModasAPI.Services
         public async Task<bool> DeleteBuy(int id)
         {
             BuyModel buyDb = await GetBuyModelForId(id);
-            InstallmentModel installment = await _installmentServices.GetInstallment(buyDb.CustomerModelId);
-            installment.RemainingValue -= buyDb.Value;
 
             _context.Remove(buyDb);
             await _context.SaveChangesAsync();
 
-            ReadInstallment settedInstalment = await _installmentServices.Parcel(new CreateInstallment
-            {
-                CustomerId = buyDb.CustomerModelId,
-                NumberOfInstallments = 1
-            });
+            return true;
+        }
 
-            if (settedInstalment.RemainingValue <= 0)
+        public async Task<ReadBuyDto> ParcelBuy(ParcelBuyDto request)
+        {
+            BuyModel buy = await GetBuyModelForId(request.Id);
+
+            buy.NumberOfInstallments = request.NumberOfInstallments;
+            buy.InstallmentValue = buy.RemainingValue / request.NumberOfInstallments;
+            buy.DateOfPayment = request.DateOfPayment;
+
+            await _context.SaveChangesAsync();
+
+            ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
+            return buyView;
+        }
+
+        public async Task<ReadBuyDto> PayBuy(int id)
+        {
+            BuyModel buy = await GetBuyModelForId(id);
+
+            buy.RemainingValue -= buy.InstallmentValue;
+            buy.NumberOfInstallments -= 1;
+
+            await _context.SaveChangesAsync();
+
+            if (buy.NumberOfInstallments <= 0)
             {
-                installment.RemainingValue = 0;
-                installment.InstallmentValue = 0;
-                installment.NumberOfInstallments = 0;
+                buy.InstallmentValue = 0;
+                buy.RemainingValue = 0;
+                buy.NumberOfInstallments = 0;
 
                 await _context.SaveChangesAsync();
             }
 
-            return true;
+            ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
+
+            return buyView;
         }
 
+        public async Task<List<ReadBuyDto>> GetBuyByDateRange(GetBuyByDateRangeDto dateRange)
+        {
+            List<BuyModel> buys = await _context.Buys.Where(x => x.DateOfPayment >= dateRange.InitialDate 
+                && x.DateOfPayment <= dateRange.FinalDate)
+                    .ToListAsync();
 
+            List<ReadBuyDto> buysView = _mapper.Map<List<ReadBuyDto>>(buys);
+
+            return buysView;
+        }
     }
 }

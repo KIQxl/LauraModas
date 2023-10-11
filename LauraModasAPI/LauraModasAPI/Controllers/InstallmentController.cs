@@ -64,7 +64,7 @@ namespace LauraModasAPI.Controllers
         {
             try
             {
-                ReadInstallment installment = await _InstallmentServices.GetInstallmentForId(id);
+                ReadInstallment installment = await _InstallmentServices.GetReadInstallment(id);
 
                 if (installment == null) return NotFound();
 
@@ -72,7 +72,7 @@ namespace LauraModasAPI.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest($"{ex.Message} aaaa");
+                return BadRequest($"{ex.Message}");
             }
         }
     }
