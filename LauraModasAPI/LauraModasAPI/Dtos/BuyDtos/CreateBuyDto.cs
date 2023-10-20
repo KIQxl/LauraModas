@@ -10,7 +10,7 @@ namespace LauraModasAPI.Dtos.BuyDtos
         public DateOnly DateOfPayment { get; set; }
         public int NumberOfInstallments { get; set; }
 
-        public DateTime Date = DateTime.Now;
+        public DateOnly Date = DateOnly.FromDateTime(DateTime.Now);
         public int CustomerModelId { get; set; }
 
     }

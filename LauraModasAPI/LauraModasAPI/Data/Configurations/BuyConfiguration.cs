@@ -28,7 +28,7 @@ namespace LauraModasAPI.Data.Configurations
                 .IsRequired();
 
             builder.Property(p => p.Date)
-                .HasColumnType("Date");
+                .HasColumnType("date");
 
             builder.Property(p => p.NumberOfInstallments)
                 .HasColumnType("int");
@@ -37,7 +37,7 @@ namespace LauraModasAPI.Data.Configurations
                 .HasColumnType("double");
 
             builder.Property(p => p.DateOfPayment)
-                .HasColumnType("Date")
+                .HasColumnType("date")
                 .IsRequired();
 
         }

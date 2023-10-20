@@ -22,6 +22,34 @@ namespace LauraModasAPI.Migrations
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("LauraModasAPI.Models.BuyLogModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateOnly>("DateOfPayment")
+                        .HasColumnType("date");
+
+                    b.Property<string>("NameOfProduct")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<double>("PaymentValue")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BuyLogs");
+                });
+
             modelBuilder.Entity("LauraModasAPI.Models.BuyModel", b =>
                 {
                     b.Property<int>("Id")
@@ -31,11 +59,11 @@ namespace LauraModasAPI.Migrations
                     b.Property<int>("CustomerModelId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("Date");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<DateOnly>("DateOfPayment")
-                        .HasColumnType("Date");
+                        .HasColumnType("date");
 
                     b.Property<string>("Description")
                         .HasColumnType("varchar(350)");
@@ -91,7 +119,7 @@ namespace LauraModasAPI.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateOnly?>("DateOfPayment")
+                    b.Property<DateOnly>("DateOfPayment")
                         .HasColumnType("date");
 
                     b.Property<double>("InstallmentValue")

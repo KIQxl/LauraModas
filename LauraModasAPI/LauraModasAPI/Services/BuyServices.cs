@@ -13,10 +13,12 @@ namespace LauraModasAPI.Services
     {
         readonly DataContext _context;
         readonly IMapper _mapper;
-        public BuyServices(DataContext context, IMapper mapper)
+        readonly IInstallmentServices _installmentServices;
+        public BuyServices(DataContext context, IMapper mapper, IInstallmentServices installmentServices)
         {
             this._context = context;
             this._mapper = mapper;
+            this._installmentServices = installmentServices;
         }
         public async Task<List<ReadBuyDto>> GetBuys()
         {
@@ -110,8 +112,21 @@ namespace LauraModasAPI.Services
         {
             BuyModel buy = await GetBuyModelForId(id);
 
+            BuyLogModel buyLog = new BuyLogModel
+            {
+
+                CustomerName = buy.CustomerModel.Name,
+                CustomerId = buy.CustomerModelId,
+                PaymentValue = buy.InstallmentValue,
+                DateOfPayment = DateOnly.FromDateTime(DateTime.Now),
+                NameOfProduct = buy.Name
+            };
+
             buy.RemainingValue -= buy.InstallmentValue;
             buy.NumberOfInstallments -= 1;
+            buy.DateOfPayment = buy.DateOfPayment.AddMonths(1);
+
+            await _context.BuyLogs.AddAsync(buyLog);
 
             await _context.SaveChangesAsync();
 
@@ -123,6 +138,15 @@ namespace LauraModasAPI.Services
 
                 await _context.SaveChangesAsync();
             }
+
+            await _installmentServices.Parcel(new CreateInstallment
+            {
+                CustomerId = buy.CustomerModelId,
+                NumberOfInstallments = 1,
+                DateOfPayment = buy.DateOfPayment
+            });
+
+            await _context.SaveChangesAsync();
 
             ReadBuyDto buyView = _mapper.Map<ReadBuyDto>(buy);
 

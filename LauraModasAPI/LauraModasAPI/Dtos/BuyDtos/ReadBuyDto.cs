@@ -13,7 +13,7 @@ namespace LauraModasAPI.Dtos.BuyDtos
         public int NumberOfInstallments { get; set; }
         public double InstallmentValue { get; set; }
         public double RemainingValue { get; set; }
-        public DateTime Date { get; set; }
+        public DateOnly Date { get; set; }
         public int CustomerModelId { get; set; }
         public virtual ReadCustomerDtoForBuy CustomerModel { get; set; }
     }

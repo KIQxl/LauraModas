@@ -63,9 +63,32 @@ namespace LauraModasAPI.Services
 
             InstallmentModel installment = await GetInstallment(id);
 
+            BuyLogModel buyLog = new BuyLogModel
+            {
+                CustomerName = installment.CustomerName,
+                CustomerId = installment.CustomerId,
+                PaymentValue = installment.InstallmentValue,
+                DateOfPayment = DateOnly.FromDateTime(DateTime.Now),
+                NameOfProduct = "Pagamento de Parcelamento"
+            };
 
             installment.NumberOfInstallments -= 1;
             installment.RemainingValue -= installment.InstallmentValue;
+            installment.DateOfPayment = installment.DateOfPayment.AddMonths(1);
+            var customerValues = await _customerServices.GetParcelValue(customer.Id);
+            double totalValueBuys = customerValues.Item1;
+
+            double percentValueOfInstallment = installment.InstallmentValue / totalValueBuys;
+
+            List<BuyModel> buysPaid = customer.BuysModel;
+
+            foreach(BuyModel buy in buysPaid)
+            {
+                buy.RemainingValue = buy.RemainingValue - (buy.RemainingValue * percentValueOfInstallment);
+                buy.DateOfPayment = buy.DateOfPayment.AddMonths(1);
+            }
+
+            await _context.BuyLogs.AddAsync(buyLog);
 
             await _context.SaveChangesAsync();
 
@@ -103,7 +126,7 @@ namespace LauraModasAPI.Services
 
             ReadInstallment installmentView = _mapper.Map<ReadInstallment>(installment);
 
-            return installmentView;            
+            return installmentView;
         }
     }
 }

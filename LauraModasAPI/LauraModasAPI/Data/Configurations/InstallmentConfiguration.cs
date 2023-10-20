@@ -24,6 +24,10 @@ namespace LauraModasAPI.Data.Configurations
 
             builder.Property(p => p.RemainingValue)
                 .HasColumnType("double");
+
+            builder.Property(p => p.DateOfPayment)
+                .HasColumnType("date")
+                .IsRequired();
         }
     }
 }
