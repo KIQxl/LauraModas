@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'LauraModasAPIProject'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1D22FE62A6854AD998E7C3FD39916BAD }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C77626091CAD41C5B652DBA5A21CB837 }}
           package: .
