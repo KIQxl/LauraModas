@@ -1,6 +1,7 @@
 ﻿using LauraModasAPI.Dtos.InstallmentDtos;
 using LauraModasAPI.Models;
 using LauraModasAPI.Services.Iservices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LauraModasAPI.Controllers
@@ -17,6 +18,7 @@ namespace LauraModasAPI.Controllers
 
         [HttpPost]
         [Route("parcel")]
+        [Authorize]
         public async Task<IActionResult> Parcel([FromBody] CreateInstallment request)
         {
             try
@@ -38,6 +40,7 @@ namespace LauraModasAPI.Controllers
 
         [HttpPost]
         [Route("pay/{id}")]
+        [Authorize]
         public async Task<IActionResult> Pay([FromRoute] int id)
         {
             try
@@ -60,6 +63,7 @@ namespace LauraModasAPI.Controllers
 
         [HttpGet]
         [Route("getInstallment/{id}")]
+        [Authorize]
         public async Task<IActionResult> GetInstallment([FromRoute] int id)
         {
             try

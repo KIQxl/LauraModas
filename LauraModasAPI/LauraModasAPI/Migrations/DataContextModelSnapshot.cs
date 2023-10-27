@@ -139,6 +139,33 @@ namespace LauraModasAPI.Migrations
                     b.ToTable("Installments");
                 });
 
+            modelBuilder.Entity("LauraModasAPI.Models.LotModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<double>("AmountValue")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Lots");
+                });
+
             modelBuilder.Entity("LauraModasAPI.Models.BuyModel", b =>
                 {
                     b.HasOne("LauraModasAPI.Models.CustomerModel", "CustomerModel")

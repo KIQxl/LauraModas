@@ -67,13 +67,13 @@ namespace LauraModasAPI.Controllers
         }
 
         [HttpPost]
-        [Route("getBuyByName")]
+        [Route("getBuyByCustomerName")]
         [Authorize]
-        public async Task<IActionResult> GetBuyByName(GetBuyByNameDto buy)
+        public async Task<IActionResult> GetBuyByCustomerName(GetBuyByNameDto buy)
         {
             try
             {
-                List<ReadBuyDto> buysView = await _services.GetBuysByName(buy.Name);
+                List<ReadBuyDto> buysView = await _services.GetBuysByCustomerName(buy.Name);
 
                 if (buysView == null)
                 {

@@ -30,6 +30,7 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ITokenServices, TokenServices>();
 builder.Services.AddScoped<IInstallmentServices, InstallmentServices>();
 builder.Services.AddScoped<IBuyLogServices, BuyLogServices>();
+builder.Services.AddScoped<ILotServices, LotServices>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var key = Encoding.UTF8.GetBytes(builder.Configuration["SymmetricSecurityKey"]);

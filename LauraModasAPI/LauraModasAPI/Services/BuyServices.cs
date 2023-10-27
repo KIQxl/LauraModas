@@ -44,9 +44,9 @@ namespace LauraModasAPI.Services
                 return buy;
         }
 
-        public async Task<List<ReadBuyDto>> GetBuysByName(string name)
+        public async Task<List<ReadBuyDto>> GetBuysByCustomerName(string name)
         {
-                List<BuyModel> buys = _context.Buys.Where(b => b.Name.ToUpper().Contains(name.ToUpper())).ToList();
+                List<BuyModel> buys = _context.Buys.Where(b => b.CustomerModel.Name.ToUpper().Contains(name.ToUpper())).ToList();
 
                 List<ReadBuyDto> buysViews = _mapper.Map<List<ReadBuyDto>>(buys);
 

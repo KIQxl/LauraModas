@@ -15,6 +15,7 @@ namespace LauraModasAPI.Data
         public DbSet<BuyModel> Buys { get; set; }
         public DbSet<InstallmentModel> Installments { get; set; }
         public DbSet<BuyLogModel> BuyLogs { get; set; }
+        public DbSet<LotModel> Lots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +23,7 @@ namespace LauraModasAPI.Data
             modelBuilder.ApplyConfiguration(new BuyConfiguration());
             modelBuilder.ApplyConfiguration(new InstallmentConfiguration());
             modelBuilder.ApplyConfiguration(new BuylogConfiguration());
+            modelBuilder.ApplyConfiguration(new LotConfiguration());
         }
     }
 }
