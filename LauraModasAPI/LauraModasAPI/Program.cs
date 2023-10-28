@@ -17,8 +17,7 @@ string connectionString = builder.Configuration.GetConnectionString("LauraModasD
 
 var symmetricSecurityKey = builder.Configuration.GetValue<string>("SymmetricSecurityKey");
 
-builder.Services.AddDbContext<DataContext>(opts => opts.UseLazyLoadingProxies()
-    .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
 
 builder.Services.AddDbContext<LoginContext>(opts => opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 

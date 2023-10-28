@@ -25,7 +25,9 @@ namespace LauraModasAPI.Services
                 new Claim("Email", user.Email)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("SymmetricSecurityKey")));
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<string>("SymmetricSecurityKey")));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SymmetricSecurityKey"]));
 
             var signinCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
