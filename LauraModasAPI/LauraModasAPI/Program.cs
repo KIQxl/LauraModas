@@ -13,7 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 builder.Services.AddControllers();
 
-string connectionString = builder.Configuration["ConnectionStrings:LauraModasDb"];
+string connectionString = builder.Configuration.GetConnectionString("LauraModasDB");
+
+var symmetricSecurityKey = builder.Configuration.GetValue<string>("SymmetricSecurityKey");
 
 builder.Services.AddDbContext<DataContext>(opts => opts.UseLazyLoadingProxies()
     .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -33,7 +35,7 @@ builder.Services.AddScoped<IBuyLogServices, BuyLogServices>();
 builder.Services.AddScoped<ILotServices, LotServices>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-var key = Encoding.UTF8.GetBytes(builder.Configuration["SymmetricSecurityKey"]);
+var key = Encoding.UTF8.GetBytes(symmetricSecurityKey);
 
 builder.Services.AddAuthentication(x =>
 {
