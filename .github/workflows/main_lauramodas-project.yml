@@ -24,7 +24,7 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
-        working-directory: LauraModasAPI/LauraModasAPI.sln
+        working-directory: LauraModasAPI
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
