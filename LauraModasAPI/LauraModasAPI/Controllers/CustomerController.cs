@@ -21,25 +21,25 @@ namespace LauraModasAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetCustomers()
         {
-            //try
-            //{
-            //    List<ReadCustomerDto> customersView = await _services.GetCustomers();
+            try
+            {
+                List<ReadCustomerDto> customersView = await _services.GetCustomers();
 
-            //    if(customersView == null)
-            //    {
-            //        return NotFound();
-            //    }
+                if (customersView == null)
+                {
+                    return NotFound();
+                }
 
-            //    return Ok(customersView);
+                return Ok(customersView);
 
-            //} catch (Exception ex)
-            //{
-            //    return BadRequest($"{ex.Message}");
-            //}
-
-            return Ok("rota funcionando porque Deus é bom");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
         }
 
         [HttpGet]
