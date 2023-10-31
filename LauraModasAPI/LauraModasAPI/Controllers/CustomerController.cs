@@ -21,7 +21,6 @@ namespace LauraModasAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetCustomers()
         {
             try
