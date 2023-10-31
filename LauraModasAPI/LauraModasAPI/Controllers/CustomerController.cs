@@ -9,7 +9,7 @@ namespace LauraModasAPI.Controllers
 {
 
     [ApiController]
-    [Route("/v1/LauraModas/Customers")]
+    [Route("v1/LauraModas/Customers")]
     public class CustomerController : ControllerBase
     {
         readonly ICustomerServices _services;
