@@ -13,9 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 builder.Services.AddControllers();
 
-string connectionString = builder.Configuration.GetConnectionString("LauraModasDB");
+string connectionString = builder.Configuration["ConnectionString:LauraModasDB"];
 
-var symmetricSecurityKey = "AzBy192837MnS7r0g0nNoFFFnui39yvd0u3nmc";
+var symmetricSecurityKey = builder.Configuration["SymmetricSecurityKey"];
 
 builder.Services.AddDbContext<DataContext>(opts => opts.UseLazyLoadingProxies()
     .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
